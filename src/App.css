@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes move-up-and-down {
+  0% {
+    transform: translateY(0);
+  }
+
+  25% {
+    transform: translateY(-12px);
+  }
+
+  50% {
+    transform: translateY(0);
+  }
+
+  75% {
+    transform: translateY(12px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes extends-group {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes close-group {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+/* 旋转 */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 边框跑马灯 */
+.gradient-border {
+  border-radius: 56px;
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -4px; /* 控制边框宽度 */
+  border-radius: inherit;
+  z-index: -1;
+  background: linear-gradient(
+    to right,
+    #ff7e5f,
+    #feb47b,
+    #86a8e7,
+    #91eae4,
+    #ff7e5f
+  );
+  animation: borderGradient 3s linear infinite;
+}
+
+@keyframes borderGradient {
+  0% {
+    background: linear-gradient(to right, #8dffe4, #feb47b);
+  }
+  25% {
+    background: linear-gradient(to right, #ff23c1, #86a8e7);
+  }
+  50% {
+    background: linear-gradient(to right, #5a28ff, #91eae4);
+  }
+  75% {
+    background: linear-gradient(to right, #ffb007, #86a8e7);
+  }
+  100% {
+    background: linear-gradient(to right, #8dffe4, #feb47b);
+  }
+}
+
+/* 定义旋转动画 */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 升级身份跑马灯动画 */
+.d2 {
+  position: relative;
+  width: 104px;
+  height: 40px;
+  /* 为了让内容区域不被边框覆盖 设置等宽的padding */
+  padding: var(--border-width);
+  border-radius: 50px;
+  text-align: center;
+  line-height: 60px;
+  color: #fff;
+  padding: 2px;
+  overflow: hidden;
+}
+.d2_box {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  background: rgb(26 44 80);
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 14px;
+  z-index: 4;
+}
+/* 利用伪元素::after 定义盒子内容区域 */
+.d2::after {
+  content: "";
+  position: absolute;
+  /* 使用css变量定位内容区域位置 */
+  left: var(--border-width);
+  top: var(--border-width);
+  /* 根据css变量设置内容区域的宽高 */
+  width: calc(100% - var(--border-width) * 2);
+  height: calc(100% - var(--border-width) * 2);
+  background: #ccc;
+  /* 设置元素层级小于父级元素 使父元素的内容能够显示在该内容区域之上 */
+  z-index: 2;
+  /* 设置圆角 要比父元素的圆角小一些 */
+  border-radius: 6px;
+}
+/* 利用伪元素::before 定义盒子边框区域 */
+.d2::before {
+  content: "";
+  position: absolute;
+  /* 利用定位和位移将元素的中心点定位到父元素的中心点 */
+  left: 50%;
+  top: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  width: 220px;
+  height: 120px;
+  /* 设置该元素的渐变背景 该背景决定了跑马灯边框的颜色 */
+  background: linear-gradient(-45deg, rgb(199, 4, 248), rgb(239, 211, 130) 60%);
+  /* 设置该元素的层级 要小于用伪元素::after 定义的盒子内容区域 */
+  z-index: 3;
+  /* 利用动画旋转该元素 */
+  animation: rotate2 1.5s linear infinite;
+  /* 设置旋转的圆心为元素的中心点 */
+  transform-origin: 50% 50%;
+}
+/* 声明旋转动画 旋转的同时 保持元素位置不变 */
+@keyframes rotate2 {
+  0% {
+    transform: translateY(-50%) translateX(-50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translateY(-50%) translateX(-50%) rotate(360deg);
+  }
+}
+
+/* 应用动画到 rotate-animation 类 */
+.rotate-animation {
+  animation: rotate 2s linear infinite;
+}
+
+.level_progress .ant-progress-bg {
+  height: 10px !important;
+}
+.line-clamp-1 {
+  word-wrap: normal; /* for IE */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.line-clamp-1_1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+.line-clamp-2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
