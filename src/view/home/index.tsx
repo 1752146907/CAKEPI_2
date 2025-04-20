@@ -23,6 +23,7 @@ import { getQueryParam } from "../../utils/getUrlParamsLegacy";
 import useConnectWallet from "../../hooks/useConnectWallet";
 import { useSign } from "../../hooks/useSign";
 import Web3 from "web3";
+import { useTranslation } from "react-i18next";
 
 const Account = () => {
   const token = useSelector((state: any) => state?.token);
@@ -43,15 +44,24 @@ const Account = () => {
 
 
   const handleSubmit = async () => {
-    console.log(TOKENAllowance);
+    console.log(TOKENAllowance); 
+    if (!account) {
+      connectWallet();
+      return
+    } 
+    if(isNode) {
+      return
+    }
+    showLoding(false);
     try {
-      if (Number(TOKENAllowance) < Number(100)) {
+      if (Number(TOKENAllowance) < (Number(nodeInfo?.price)  / 1e18)) {
         await handleApprove();
         await handleUSDTRefresh();
       }
-      handleClaim()
+      handleBuyNode()
     } catch (error) {
       console.log(error);
+      showLoding(false);
     }
   };
 
@@ -59,32 +69,28 @@ const Account = () => {
     if (!account) {
       connectWallet();
       return
-    }; 
-    handleRewardHistory() 
+    };  
   }, [account]);
 
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
-  const [open3, setOpen3] = useState(false);
-  const [open4, setOpen4] = useState(false);
-  const [open5, setOpen5] = useState(false);  //弹出邀请码
-  const [tabIndex, setTabIndex] = useState(0);
 
   // 绑定上级地址 
   const exampleValue = getQueryParam("inviteCode") || ""; // 推荐地址
   const [bindAddress, setBindAddress]: any = useState(exampleValue);
   const handleBind = async () => {
     if (!account) return;
-    showLoding(true);
-    try {
+    showLoding(true); 
+    try { 
       let _res = await Contracts.example?.isBind(account);
       if (_res) {
         showLoding(false);
         return
       }
+      console.info('isBind');
+      console.info(_res);
       let res
-      res = await Contracts.example?.bindInvitation(account, bindAddress);
-      setOpen5(false); 
+      res = await Contracts.example?.bindInvitation(account, getQueryParam("inviteCode")); 
       console.info('绑定上级地址结果');
       console.info(res);
       showLoding(false);
@@ -99,6 +105,8 @@ const Account = () => {
       setBindAddress(getQueryParam("inviteCode"))
       handleBind()
     } 
+    handleIsNode()
+    handleNodeInfo()
   }, [account]);
 
   // 查询节点信息
@@ -155,45 +163,19 @@ const Account = () => {
     showLoding(true);
     try {
       let res
-      res = await Contracts.example?.buyNode(account, {
-          buyNodeTime: '',
-          buyUsdtAmount: '',  
-          buyCakeAmount: ''
-      });
+      res = await Contracts.example?.buyNode(account);
       console.info('购买节点');
       console.info(res); 
+      showLoding(false);
     } catch (error) {
       console.info(error); 
+      showLoding(false);
     }
   }
 
   const { connectWallet } = useConnectWallet();
   const { signFun } = useSign();
-
-  // 领取ido
-  const handleClaim = async () => {
-    if (!account) {
-      connectWallet();
-      return
-    } 
-    showLoding(true);
-    try {
-      await signFun(async (_res: any) => {
-        try {
-          let res
-          res = await Contracts.example?.withdrawIdo(account);
-          console.info(res);
-          setOpen4(true)
-          showLoding(false);
-        } catch (error) {
-          showLoding(false);
-        }
-      }, `userAddress=${account as string}`)
-    } catch (error) {
-      console.info(error);
-      showLoding(false);
-    }
-  }    
+ 
   // 查询奖励历史记录
   const [rewardHistory, setRewardHistory] = useState<any>([])
   const handleRewardHistory = async () => {
@@ -245,6 +227,7 @@ const Account = () => {
   const truncateToTwoDecimals = (num: any) => {
     return Math.floor(num * 100) / 100;
   }
+  let { t, i18n } = useTranslation();
 
   return (
     <div className="w-full">
@@ -317,35 +300,47 @@ const Account = () => {
           <div className="text-[#FFAE2E] text-[18px] font-[600] pb-20">{t('38')}</div>
           <div className="flex items-center pb-[8px]">
             <div className="text-[#fff] text-[14px]">{t('39')}：</div>
-            <div className="flex-1 text-[#fff] text-[16px] text-right">{t('40')}</div>
-            {/* <div className="flex-1 text-[#3AFF89] text-[16px] text-right">{t('41')}</div> */}
-            {/* <div className="flex-1 text-[#EB111C] text-[16px] text-right">{t('42')}</div> */}
+            {
+              nodeInfo?.soldNodeNum === nodeInfo?.nodeNum ?
+                <div className="flex-1 text-[#EB111C] text-[16px] text-right">{t('42')}</div>
+              : 
+                <div className="flex-1 text-right">
+                  {
+                    nodeInfo?.status ?
+                    <div className=" text-[#3AFF89] text-[16px]">{t('41')}</div>
+                    :
+                    <div className="  text-[#fff] text-[16px] ">{t('40')}</div>
+                  }  
+                </div> 
+            }
           </div>
           <div className="flex items-center pb-[8px]">
             <div className="text-[#fff] text-[14px]">{t('43')}：</div>
-            <div className="flex-1 text-[#fff] text-[16px] text-right">60/100</div>
+            <div className="flex-1 text-[#fff] text-[16px] text-right">{nodeInfo?.soldNodeNum}/{nodeInfo?.nodeNum}</div>
           </div>
           <div className="flex items-center pb-[8px]">
             <div className="text-[#fff] text-[14px]">{t('44')}：</div>
             <div className="flex-1 flex items-center justify-end text-[#fff] text-[16px] text-right"> 
-              800 USDT
+              {Number(nodeInfo?.price)  / 1e18} USDT
             </div>
           </div>
           <div className="flex items-center pb-[8px]">
             <div className="text-[#fff] text-[14px]">{t('45')}：</div>
-            <div className="flex-1 text-[#fff] text-[16px] text-right">60%</div>
+            <div className="flex-1 text-[#fff] text-[16px] text-right">{( Number(nodeInfo?.soldNodeNum) / Number(nodeInfo?.nodeNum) ) * 100}%</div>
           </div>
           <div className="relative bg-[#404651] h-[10px] w-full rounded-[24px]">
             <div className="absolute top-0 left-0 h-[10px] rounded-[24px]" style={{
-              width: 60 + '%',
+              width:( Number(nodeInfo?.soldNodeNum) / Number(nodeInfo?.nodeNum) ) * 100 + '%',
               background: "linear-gradient(90deg, #FFAE2E 0%, #FFAE2E 100%)"
             }}></div>
           </div>
           <div
-            onClick={() => { 
+            onClick={handleSubmit}
+            style={{
+              opacity: isNode ? 0.5 : 1,
             }}
             className="w-[188px] mx-auto bg-[#FFAE2E] mt-[40px] text-[#000] text-center py-[12px] rounded-[10px] text-[14px] font-[700]">
-              Subscription
+              {t('54')}
           </div> 
           <div className="pt-[18px] ml-20 "> 
             <div className="text-[#fff] text-[14px] font-[600] flex justify-end items-center"
