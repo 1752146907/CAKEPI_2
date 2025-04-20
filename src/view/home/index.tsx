@@ -29,7 +29,7 @@ const Account = () => {
 
   // usdt余额
   const { TOKENBalance: USDTBalance } = useUSDTGroup(
-    contractAddress.CakeIdo,
+    contractAddress.CakeNode,
     "Cake"
   );
 
@@ -38,7 +38,7 @@ const Account = () => {
     TOKENAllowance,
     handleApprove,
     handleUSDTRefresh,
-  } = useUSDTGroup(contractAddress.CakeIdo, "Cake");
+  } = useUSDTGroup(contractAddress.CakeNode, "Cake");
   const { account } = useWeb3React<any>();
 
 
@@ -100,6 +100,72 @@ const Account = () => {
       handleBind()
     } 
   }, [account]);
+
+  // 查询节点信息
+  const [nodeInfo, setNodeInfo] = useState<any>({})
+  const handleNodeInfo = async () => {
+    if (account) { 
+      try {
+        let res: any
+        res = await Contracts.example?.nodeInfo(account);
+        console.info('查询节点信息');
+        console.info(res);
+        setNodeInfo(res); 
+      } catch (error) {
+        console.info(error); 
+      }
+    }
+  }
+
+  // 查看是否是节点
+  const [isNode, setIsNode] = useState(false)
+  const handleIsNode = async () => {
+    if (account) { 
+      try {
+        let res: any
+        res = await Contracts.example?.isNode(account);
+        console.info('查询是否是节点');
+        console.info(res);
+        setIsNode(res); 
+      } catch (error) {
+        console.info(error); 
+      }
+    }
+  }
+
+  // 根据USDT数量查询对应Cake数量
+  const [cakeAmount, setCakeAmount] = useState(0)
+  const handleCakeAmount = async () => {
+    if (account) { 
+      try {
+        let res: any
+        res = await Contracts.example?.calCakeAmountByUsdtAmount(USDTBalance);
+        console.info('根据USDT数量查询对应Cake数量');
+        console.info(res);
+        setCakeAmount(res);
+      } catch (error) {
+        console.info(error); 
+      }
+    }
+  }
+
+  // 购买节点
+  const handleBuyNode = async () => {
+    if (!account) return;
+    showLoding(true);
+    try {
+      let res
+      res = await Contracts.example?.buyNode(account, {
+          buyNodeTime: '',
+          buyUsdtAmount: '',  
+          buyCakeAmount: ''
+      });
+      console.info('购买节点');
+      console.info(res); 
+    } catch (error) {
+      console.info(error); 
+    }
+  }
 
   const { connectWallet } = useConnectWallet();
   const { signFun } = useSign();

@@ -301,15 +301,6 @@ export class Contracts {
 
 
   /*          分割线             */
-  // 绑定上级地址
-  bindInvitation(addr: any, data: any) {
-    this.verification("CakeIdo");
-    return this.contract.CakeIdo?.methods.bind(data).send({
-      from: addr,
-      // gasPrice: "5000000000",
-      // value: Web3.utils.toWei(mathRandom),
-    });
-  }
   // 参与IDO
   subscription(addr: any, data: any) {
     this.verification("CakeIdo");
@@ -358,16 +349,44 @@ export class Contracts {
     this.verification("CakeIdo");
     return this.contract.CakeIdo?.methods.rewardHistory(addr).call({ from: addr });
   }
+
+
+  // 绑定上级地址
+  bindInvitation(addr: any, data: any) {
+    this.verification("CakeNode");
+    return this.contract.CakeNode?.methods.bind(data).send({
+      from: addr,
+      // gasPrice: "5000000000",
+      // value: Web3.utils.toWei(mathRandom),
+    });
+  }
   // 查询是否绑定
-  isBind(addr: string) {
-    this.verification("CakeIdo");
-    return this.contract.CakeIdo?.methods.isBind(addr).call({ from: addr });
+  isBind(addr: string, data?: any) {
+    this.verification("CakeNode");
+    return this.contract.CakeNode?.methods.isBind(addr).call({ from: addr });
+  } 
+  // 查询是否是节点
+  isNode(addr: string, data?: any) {
+    this.verification("CakeNode");
+    return this.contract.CakeNode?.methods.isNode(addr).call({ from: addr });
   }
-  // 查询水龙头领取数量
-  userFaucetAmount(addr: string) {
-    this.verification("CakeIdo");
-    return this.contract.CakeIdo?.methods.userFaucetAmount(addr).call({ from: addr });
+  // 查询节点信息
+  nodeInfo(addr: string, data?: any) {
+    this.verification("CakeNode");
+    return this.contract.CakeNode?.methods.nodeInfo(addr).call({ from: addr });
   }
-
-
+  // 根据USDT数量查询对应Cake数量
+  calCakeAmountByUsdtAmount(addr: string, data?: any) {
+    this.verification("CakeNode");
+    return this.contract.CakeNode?.methods.calCakeAmountByUsdtAmount(addr).call({ from: addr });
+  }
+  // 购买节点
+  buyNode(addr: any, data: any) {
+    this.verification("CakeNode");
+    return this.contract.CakeNode?.methods.BuyNode(data).send({
+      from: addr,
+      // gasPrice: "5000000000",
+      // value: Web3.utils.toWei(mathRandom),
+    });
+  }
 }

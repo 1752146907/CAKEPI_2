@@ -4,10 +4,11 @@ import PassNft from "./ABI/PassNft.json";
 import CC from "./ABI/Cc.json";
 import NFTManage from "./ABI/NFTManage.json";
 import CakeIdo from "./ABI/Cake.json";
+import CakeNode from "./ABI/CakeNode.json";
 
 export const LOCAL_KEY = "MBAS_LANG";
 // 判断环境
-export const isMain = true;
+export const isMain = false;
 // 自己 /api
 const windowHost = window.location.origin;
 let pattern =
@@ -35,6 +36,7 @@ export const abiObj: abiObjType = {
   CC: CC,
   NFTManage: NFTManage,
   CakeIdo: CakeIdo,
+  CakeNode: CakeNode,
   Cake: Token
 };
 
@@ -47,6 +49,7 @@ export const Main: contractAddressType = {
   NFTManage: "0x0B3937869D275815eDAA2c617cd8f378ABFF2D6b",
 
   Cake: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
+  CakeNode: '0x1Ac0B106927B5454A2C2fB903a8B616A33Cc7A3a',
   CakeIdo: '0x50964613e358A46194668C9b631412DF83AeD8e2',
 };
 
@@ -57,8 +60,9 @@ const Test = {
   PassNft: "0xb6E7b0249becEc75D44843B7Ab62EFaA1E1D403D",
   CC: "0xE4ee9eE77f2b851f27Db3268E84CC5CB03759bB8",
   NFTManage: "0x0d0dAdCB0A01b56FA6362Db91E5cE6192e4Be61b",
-  Cake: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
-  CakeIdo: '0xf63b5B8f10cc7a41225298405854815303ef02CD',
+  Cake: '0x1Ac0B106927B5454A2C2fB903a8B616A33Cc7A3a',
+  CakeNode: '0x1Ac0B106927B5454A2C2fB903a8B616A33Cc7A3a',
+  CakeIdo: '0x09Ce5DE3EF7aE5F0fA5fB226cf57844FC9D31154',
 };
 
 export const contractAddress: contractAddressType = isMain ? Main : Test;
