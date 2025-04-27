@@ -122,14 +122,17 @@ const Account = () => {
       console.info('isBind');
       console.info(_ress); 
       setIsBind(_ress); 
-      showLoding(false);
       if (_ress) { 
+        showLoding(false);
         return
       } 
       
       let res = await Contracts.example?.bindInvitation(account, getQueryParam("inviteCode")); 
       console.info('绑定上级地址结果');
       console.info(res); 
+       
+      setIsBind(await Contracts.example?.isBind(account)); 
+
       showLoding(false);  
     } catch (error) { 
       console.info(error);
