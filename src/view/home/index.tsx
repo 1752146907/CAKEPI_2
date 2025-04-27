@@ -28,10 +28,14 @@ import { useTranslation } from "react-i18next";
 const Account = () => {
   const token = useSelector((state: any) => state?.token);
 
-  // usdt余额
+  // 余额
   const { TOKENBalance: USDTBalance } = useUSDTGroup(
     contractAddress.CakeNode,
     "Cake"
+  );
+  const { TOKENBalance: USDTBalanceUSDT } = useUSDTGroup(
+    contractAddress.CakeNode,
+    "USDT"
   );
 
   const {
@@ -40,23 +44,55 @@ const Account = () => {
     handleApprove,
     handleUSDTRefresh,
   } = useUSDTGroup(contractAddress.CakeNode, "Cake");
+
+  const {
+    handleTransaction: handleTransactionUSDT,
+    TOKENAllowance: TOKENAllowanceUSDT,
+    handleApprove: handleApproveUSDT,
+    handleUSDTRefresh: handleUSDTRefreshUSDT,
+  } = useUSDTGroup(contractAddress.CakeNode, "USDT");
+
   const { account } = useWeb3React<any>();
 
 
   const handleSubmit = async () => {
-    console.log(TOKENAllowance); 
+    // 1 for cake;2 for usdt
     if (!account) {
       connectWallet();
       return
     } 
-    if(isNode) {
+    if(isNode) { 
       return
     }
+    if (dalamType === 1 && Number(USDTBalance) < (Number(nodeInfo?.price)  / 1e18)) {
+      notification.open({
+        message: t("8"),
+      })
+      return
+    }
+    if (dalamType === 2 && Number(USDTBalanceUSDT) < (Number(nodeInfo?.price)  / 1e18)) {
+      notification.open({
+        message: t("8"),
+      })
+      return
+    }
+    console.info('c', TOKENAllowance, USDTBalance);
+    console.info('u', TOKENAllowanceUSDT, USDTBalanceUSDT);
+    console.info('dalamType', dalamType);
+    console.info('TOKENAllowance', TOKENAllowance);
+    console.info('TOKENAllowanceUSDT', TOKENAllowanceUSDT);
+    debugger
     showLoding(false);
     try {
-      if (Number(TOKENAllowance) < (Number(nodeInfo?.price)  / 1e18)) {
+      if (dalamType === 1 && Number(TOKENAllowance) < (Number(nodeInfo?.price)  / 1e18)) {
+        debugger
         await handleApprove();
         await handleUSDTRefresh();
+      }
+      if (dalamType === 2 && Number(TOKENAllowanceUSDT) < (Number(nodeInfo?.price)  / 1e18)) {
+        debugger
+        await handleApproveUSDT();
+        await handleUSDTRefreshUSDT();
       }
       handleBuyNode()
     } catch (error) {
@@ -78,35 +114,41 @@ const Account = () => {
   // 绑定上级地址 
   const exampleValue = getQueryParam("inviteCode") || ""; // 推荐地址
   const [bindAddress, setBindAddress]: any = useState(exampleValue);
-  const handleBind = async () => {
-    if (!account) return;
-    showLoding(true); 
-    try { 
-      let _res = await Contracts.example?.isBind(account);
-      if (_res) {
-        showLoding(false);
-        return
-      }
+  const [isBind, setIsBind] = useState(false);
+  const handleBind = async () => { 
+    showLoding(true);
+    try {
+      let _ress = await Contracts.example?.isBind(account);
       console.info('isBind');
-      console.info(_res);
-      let res
-      res = await Contracts.example?.bindInvitation(account, getQueryParam("inviteCode")); 
-      console.info('绑定上级地址结果');
-      console.info(res);
+      console.info(_ress); 
+      setIsBind(_ress); 
       showLoding(false);
-    } catch (error) {
+      if (_ress) { 
+        return
+      } 
+      
+      let res = await Contracts.example?.bindInvitation(account, getQueryParam("inviteCode")); 
+      console.info('绑定上级地址结果');
+      console.info(res); 
+      showLoding(false);  
+    } catch (error) { 
       console.info(error);
       showLoding(false);
     }
+ 
   }
   useEffect(() => {
-    if (!account) return;
-    if (getQueryParam("inviteCode")) {
-      setBindAddress(getQueryParam("inviteCode"))
-      handleBind()
-    } 
-    handleIsNode()
-    handleNodeInfo()
+    const init = async () => {
+      if (!account) return;
+      if (getQueryParam("inviteCode")) {
+        await setBindAddress(getQueryParam("inviteCode"))
+        await handleBind() 
+      } 
+      handleIsNode()
+      handleNodeInfo()
+    };
+
+    init();
   }, [account]);
 
   // 查询节点信息
@@ -160,12 +202,14 @@ const Account = () => {
   // 购买节点
   const handleBuyNode = async () => {
     if (!account) return;
-    showLoding(true);
+    showLoding(true); 
     try {
       let res
-      res = await Contracts.example?.buyNode(account);
+      res = await Contracts.example?.buyNode(account,dalamType);
       console.info('购买节点');
       console.info(res); 
+      handleIsNode()
+      handleNodeInfo()
       showLoding(false);
     } catch (error) {
       console.info(error); 
@@ -234,13 +278,7 @@ const Account = () => {
 
   return (
     <div className="w-full">
-      <TopBar />
-      {/* <div className="">
-        <div className="text-[#fff] text-[26px] font-[700] text-center pb-[30px]">
-          USDTBalance: {USDTBalance}
-        </div>
-        <div onClick={handleSubmit}>1111111: {TOKENAllowance}</div>
-      </div> */}
+      <TopBar /> 
       <div className="h-[358px]" style={{
         backgroundImage: `url(${icon5})`,
         backgroundSize: "cover",
@@ -351,7 +389,7 @@ const Account = () => {
               style={{border: '1px solid #fff'}}
               ></div> 
               }
-              USDT
+              CAKE
             </div> 
             <div
             onClick={() => {setDalamType(2)}}
@@ -362,12 +400,11 @@ const Account = () => {
                   <div className="w-[16px] h-[16px] mr-6 rounded-full"
               style={{border: '1px solid #fff'}}
               ></div> 
-              }
-              CAKE
+              } USDT
+              
             </div> 
-            <div
-            onClick={() => {setDalamType(3)}}
-            className={`${dalamType === 3? 'text-[#FFAE2E]' : 'text-[#fff]'} flex-1  text-[16px] flex items-center`}>
+            <div 
+            className={`${dalamType === 3? 'text-[#FFAE2E]' : 'text-[#fff]'} flex-1 opacity-50 text-[16px] flex items-center`}>
               {dalamType === 3?
                   <div className="w-[16px] h-[16px] mr-6 bg-[#FFAE2E] rounded-full"></div>
                   :
@@ -375,13 +412,13 @@ const Account = () => {
               style={{border: '1px solid #fff'}}
               ></div> 
               }
-              CAKEPI
+              PICAKE
             </div> 
           </div>
           <div
             onClick={handleSubmit}
             style={{
-              opacity: isNode ? 0.5 : 1,
+              opacity: isNode || !isBind ? 0.5 : 1,
             }}
             className="w-[188px] mx-auto bg-[#FFAE2E] mt-[40px] text-[#000] text-center py-[12px] rounded-[10px] text-[14px] font-[700]">
               {t('54')}

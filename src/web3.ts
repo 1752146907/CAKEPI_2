@@ -361,9 +361,14 @@ export class Contracts {
     });
   }
   // 查询是否绑定
-  isBind(addr: string, data?: any) {
-    this.verification("CakeNode"); 
-    return this.contract.CakeNode?.methods.isBind(addr).call({ from: addr });
+  async isBind(addr: any, data?: any) {
+    try {
+      this.verification("CakeNode"); 
+      const _res = await this.contract.CakeNode?.methods.isBind(addr).call({ from: addr }) 
+      return _res;
+    } catch (error) {
+      return false;
+    }
   } 
   // 查询是否是节点
   isNode(addr: string, data?: any) {
@@ -382,9 +387,9 @@ export class Contracts {
     return this.contract.CakeNode?.methods.calCakeAmountByUsdtAmount(addr).call({ from: addr });
   }
   // 购买节点
-  buyNode(addr: any, data?: any) {
+  buyNode(addr: any, dalamType?: any) {
     this.verification("CakeNode");
-    return this.contract.CakeNode?.methods.buyNode().send({
+    return this.contract.CakeNode?.methods.buyNode(dalamType).send({
       from: addr,
       // gasPrice: "5000000000",
       // value: Web3.utils.toWei(mathRandom),
