@@ -229,6 +229,9 @@ const Account = () => {
   }
   let { t, i18n } = useTranslation();
 
+  // 参与方式
+  const [dalamType, setDalamType] = useState(1);
+
   return (
     <div className="w-full">
       <TopBar />
@@ -333,6 +336,47 @@ const Account = () => {
               width:( Number(nodeInfo?.soldNodeNum) / Number(nodeInfo?.nodeNum) ) * 100 + '%',
               background: "linear-gradient(90deg, #FFAE2E 0%, #FFAE2E 100%)"
             }}></div>
+          </div>
+          <div className="flex items-center pb-6 pt-[10px]">
+            <div className="text-[#fff] text-[14px]">{t('55')}：</div> 
+          </div>
+          <div className="pb-[8px] flex items-center">  
+            <div
+            onClick={() => {setDalamType(1)}}
+            className={`${dalamType === 1? 'text-[#FFAE2E]' : 'text-[#fff]'} flex-1  text-[16px] flex items-center`}>
+              {dalamType === 1?
+                  <div className="w-[16px] h-[16px] mr-6 bg-[#FFAE2E] rounded-full"></div>
+                  :
+                  <div className="w-[16px] h-[16px] mr-6 rounded-full"
+              style={{border: '1px solid #fff'}}
+              ></div> 
+              }
+              USDT
+            </div> 
+            <div
+            onClick={() => {setDalamType(2)}}
+            className={`${dalamType === 2? 'text-[#FFAE2E]' : 'text-[#fff]'} flex-1  text-[16px] flex items-center`}>
+              {dalamType === 2?
+                  <div className="w-[16px] h-[16px] mr-6 bg-[#FFAE2E] rounded-full"></div>
+                  :
+                  <div className="w-[16px] h-[16px] mr-6 rounded-full"
+              style={{border: '1px solid #fff'}}
+              ></div> 
+              }
+              CAKE
+            </div> 
+            <div
+            onClick={() => {setDalamType(3)}}
+            className={`${dalamType === 3? 'text-[#FFAE2E]' : 'text-[#fff]'} flex-1  text-[16px] flex items-center`}>
+              {dalamType === 3?
+                  <div className="w-[16px] h-[16px] mr-6 bg-[#FFAE2E] rounded-full"></div>
+                  :
+                  <div className="w-[16px] h-[16px] mr-6 rounded-full"
+              style={{border: '1px solid #fff'}}
+              ></div> 
+              }
+              CAKEPI
+            </div> 
           </div>
           <div
             onClick={handleSubmit}
