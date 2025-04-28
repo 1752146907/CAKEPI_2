@@ -16,7 +16,7 @@ import icon7 from "../../assets/image/icon7.png"
 import icon8 from "../../assets/image/icon8.png"
 import { Modal, notification } from "antd";
 import { Contracts } from "../../web3";
-import { AddrHandle, showLoding } from "../../utils/tool";
+import { AddrHandle, formatDate, showLoding } from "../../utils/tool";
 import copy from "copy-to-clipboard";
 import { t } from "i18next";
 import { getQueryParam } from "../../utils/getUrlParamsLegacy";
@@ -489,7 +489,7 @@ const Account = () => {
             idoHistory.length > 0 ?
               idoHistory?.map((item: any, index: number) => (
                 <div className="flex items-center px-16" key={index}>
-                  <div className="text-[#fff] text-[14px] w-[132px]">{formatCountdown2(item?.createTime)}</div>
+                  <div className="text-[#fff] text-[14px] w-[132px]">{formatDate(item?.createTime, 'long')}</div>
                   <div className="text-[#fff] text-[14px] flex-1 ">{item?.amountCake}  </div >
                   <div className="text-[#fff] text-[14px] flex-1 text-right">{item?.status}</div >
                 </div>
@@ -539,17 +539,17 @@ const Account = () => {
             inviteList.length > 0 ?
             inviteList?.map((item: any, index: number) => (
                 <div className="flex items-center px-16" key={index}>
-                  <div className="text-[#fff] text-[14px] w-[128px]">{formatCountdown2(item?.createTime)}</div>
+                  <div className="text-[#fff] text-[14px] w-[128px]">{formatDate(item?.createTime, 'long')}</div>
                   <div className="text-[#fff] text-[14px] flex-1 flex items-center">
                   {
                   AddrHandle(item?.userAddress,
                     6,
                     4
                   )}
-                  <img src={icon7} className="w-[16px] h-[16px] ml-2" alt="" />
+                  {/* <img src={icon7} className="w-[16px] h-[16px] ml-2" alt="" /> */}
                   </div>
                   <div className="text-[#fff] text-[14px] flex-1 text-right">
-                    {item?.performance}
+                    {item?.performance || 0}
                   </div>
                 </div>
               ))

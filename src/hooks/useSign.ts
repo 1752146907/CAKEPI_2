@@ -17,7 +17,7 @@ export const useSign = () => {
     Contracts.example
       .Sign(account as string, `${msg}&time=${time}`)
       .then((res: string) => {
-        callback({ sign: res, signMsg: `${msg}&time=${time}` });
+        callback({ sign: res, msg: `${msg}&time=${time}` });
       })
       .catch((res: any) => {
         if (res.code === 4001) {

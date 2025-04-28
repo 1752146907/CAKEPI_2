@@ -110,6 +110,27 @@ export function addMessage(msg: string) {
     })
   );
 }
+
+export function formatDate(dateArray: [number, number, number, number, number?, number?], formatType: 'short' | 'long' = 'short'): string {
+  if (!Array.isArray(dateArray) || dateArray.length < 4) {
+    return '-';
+  }
+
+  let [year, month, day, hour = 0, minute = 0] = dateArray;
+
+  // 格式化月份和日期，确保两位数
+  let formattedMonth = String(month).padStart(2, '0');
+  let formattedDay = String(day).padStart(2, '0');
+  let formattedMinute = String(minute).padStart(2, '0');
+
+  if (formatType === 'short') {
+    return `${hour}:${formattedMinute} ${formattedMonth}/${formattedDay}`;
+  } else if (formatType === 'long') {
+    return `${year}-${formattedMonth}-${formattedDay} ${hour}:${formattedMinute}`;
+  }
+
+  return '-'; // 处理无效 formatType
+}
 export function isApprove(price: number | string, Approve: string) {
   return new BigNumber(Approve).gte(price);
 }

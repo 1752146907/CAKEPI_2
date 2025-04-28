@@ -61,7 +61,7 @@ const MainLayout: React.FC = () => {
         refereeUserAddress = "";
       } 
       try {
-        await signFun((res: any) => {
+        await signFun((res: any) => { 
           Login({
             ...res,
             userAddress: web3React.account as string,
