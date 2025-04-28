@@ -55,10 +55,11 @@ const MainLayout: React.FC = () => {
     if (web3React.account) {
       const exampleValue = getQueryParam("inviteCode") || ""; // 推荐地址
       let tag = await web3.utils.isAddress(exampleValue);
-      if (tag) {
+      if (tag && exampleValue) {
         refereeUserAddress = exampleValue;
       } else {
         refereeUserAddress = "";
+        return
       } 
       try {
         await signFun((res: any) => { 
@@ -68,6 +69,7 @@ const MainLayout: React.FC = () => {
             refereeUserAddress: exampleValue,
           })
             .then((res: any) => {
+              debugger
               if (res.code === 200) {
                 showLodingFun(false);
                 dispatch(
@@ -94,7 +96,7 @@ const MainLayout: React.FC = () => {
   }, [connectWallet]);
 
   useEffect(() => {
-    LoginFun();
+    // LoginFun();
   }, [web3React.account]);
 
   useEffect(() => {

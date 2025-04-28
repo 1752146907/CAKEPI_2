@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import TopBar from "../../components/topBar";
 import FooterBar from "../../components/footerBar";
@@ -24,7 +24,8 @@ import useConnectWallet from "../../hooks/useConnectWallet";
 import { useSign } from "../../hooks/useSign";
 import Web3 from "web3";
 import { useTranslation } from "react-i18next";
-import { getInviteList, getNodeList } from "../../API";
+import { Login, getInviteList, getNodeList } from "../../API";
+import { createLoginSuccessAction } from "../../store/actions";
 
 const Account = () => {
   const token = useSelector((state: any) => state?.token);
@@ -143,19 +144,57 @@ const Account = () => {
   }
   useEffect(() => {
     const init = async () => {
-      if (!account || !token) return;
+      if (!account) return;
       if (getQueryParam("inviteCode")) {
         await setBindAddress(getQueryParam("inviteCode"))
         await handleBind() 
       } 
       handleIsNode()
       handleNodeInfo()
-      handleInviteList()
-      handleIdoHistory()
+      LoginFun()
     };
 
     init();
-  }, [account, token]);
+  }, [account]);
+
+  useEffect(() => {
+    if (token) {
+      handleInviteList()
+      handleIdoHistory()
+    }
+  }, [token])
+
+  let dispatch = useDispatch();
+  const { signFun } = useSign();
+  const web3 = new Web3();
+  const web3React = useWeb3React();
+  const LoginFun = useCallback(async () => {
+    if (web3React.account) { 
+      try {
+        await signFun((res: any) => { 
+          Login({
+            ...res,
+            userAddress: web3React.account as string, 
+          })
+            .then((res: any) => { 
+              if (res.code === 200) { 
+                dispatch(
+                  createLoginSuccessAction(
+                    res.data.token,
+                    web3React.account as string
+                  )
+                );
+              } else { 
+              }
+            })
+            .catch(() => { });
+        }, `userAddress=${web3React.account as string}`);
+      } catch (error) {
+        console.info(error);
+      }
+    }
+  }, [web3React.account]);
+
 
   // 查询节点信息
   const [nodeInfo, setNodeInfo] = useState<any>({})
