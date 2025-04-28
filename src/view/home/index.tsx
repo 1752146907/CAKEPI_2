@@ -289,7 +289,7 @@ const Account = () => {
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
       }}>
-        <div className="text-[#FFAE2E] text-[40px] font-[700] text-center pt-[156px] pb-2" style={{
+        <div className="text-[#FFAE2E] text-[40px] font-[700] text-center pt-[146px] pb-2" style={{
           textShadow: "3px 4px #4d4c4cc7"
         }}>{t('9')}</div>
 
@@ -490,8 +490,11 @@ const Account = () => {
               idoHistory?.map((item: any, index: number) => (
                 <div className="flex items-center px-16" key={index}>
                   <div className="text-[#fff] text-[14px] w-[132px]">{formatDate(item?.createTime, 'long')}</div>
-                  <div className="text-[#fff] text-[14px] flex-1 ">{item?.amountCake}  </div >
-                  <div className="text-[#fff] text-[14px] flex-1 text-right">{item?.status}</div >
+                  <div className="text-[#fff] text-[14px] flex-1 ">
+                  { item?.type === 1 ? item?.amountCake : item?.amountUsdt } 
+                  { item?.type === 1 ? ' CAKE' : ' USDT' }  
+                  </div >
+                  <div className="text-[#fff] text-[14px] flex-1 text-right">{t('48')}</div >
                 </div>
               ))
               :
