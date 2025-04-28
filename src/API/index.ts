@@ -8,11 +8,31 @@ interface LoginData {
 
 export function Login(data: LoginData) {
   return axois.request({
-    url: "/user/login",
+    url: "/user/loginByPass",
     method: "post",
     data: {
       ...data,
       Encrypt: true,
+    },
+  });
+}
+// 邀请列表
+export function getInviteList(data: any) {
+  return axois.request({
+    url: "/userReferee/refereeList",
+    method: "post",
+    data: {
+      ...data,
+    },
+  });
+}
+// 节点购买列表
+export function getNodeList(data: any) {
+  return axois.request({
+    url: "/nodeBuy/nodeBuyList",
+    method: "post",
+    data: {
+      ...data,
     },
   });
 }

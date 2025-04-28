@@ -59,8 +59,7 @@ const MainLayout: React.FC = () => {
         refereeUserAddress = exampleValue;
       } else {
         refereeUserAddress = "";
-      }
-      return
+      } 
       try {
         await signFun((res: any) => {
           Login({

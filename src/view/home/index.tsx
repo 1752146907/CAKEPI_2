@@ -24,6 +24,7 @@ import useConnectWallet from "../../hooks/useConnectWallet";
 import { useSign } from "../../hooks/useSign";
 import Web3 from "web3";
 import { useTranslation } from "react-i18next";
+import { getInviteList, getNodeList } from "../../API";
 
 const Account = () => {
   const token = useSelector((state: any) => state?.token);
@@ -142,17 +143,19 @@ const Account = () => {
   }
   useEffect(() => {
     const init = async () => {
-      if (!account) return;
+      if (!account || !token) return;
       if (getQueryParam("inviteCode")) {
         await setBindAddress(getQueryParam("inviteCode"))
         await handleBind() 
       } 
       handleIsNode()
       handleNodeInfo()
+      handleInviteList()
+      handleIdoHistory()
     };
 
     init();
-  }, [account]);
+  }, [account, token]);
 
   // 查询节点信息
   const [nodeInfo, setNodeInfo] = useState<any>({})
@@ -220,34 +223,32 @@ const Account = () => {
     }
   }
 
-  const { connectWallet } = useConnectWallet();
-  const { signFun } = useSign();
- 
-  // 查询奖励历史记录
-  const [rewardHistory, setRewardHistory] = useState<any>([])
-  const handleRewardHistory = async () => {
-    if (account) {
-      showLoding(true);
-      try {
-        let res: any
-        res = await Contracts.example?.rewardHistory(account);
-        console.info('查询奖励历史记录');
-        console.info(res);
-        let reward = res?.rewardTimes.map((time: any, index: any) => ({
-          rewardTimes: time,
-          rewardAmount: res?.rewardAmount[index],
-          rewardType: res?.rewardType[index]
-        }));
-        setRewardHistory(reward);
-        showLoding(false);
-      } catch (error) {
-        console.info(error);
-        showLoding(false);
-      }
-    }
-  }  
-
+  const { connectWallet } = useConnectWallet(); 
+   
+  // 获取邀请列表
+  const [inviteList, setInviteList] = useState<any>([])
+  const handleInviteList = async () => {
+    getInviteList({
+      pageNum: 0,
+      pageSize: 200
+        }).then((res: any) => { 
+          setInviteList(res?.data?.list);
+        }).catch((err: any) => {
+          console.info(err);
+      })
+  } 
+// 认购记录
   const [idoHistory, setIdoHistory] = useState<any>([])
+  const handleIdoHistory = async () => {
+    getNodeList({
+      pageNum: 0,
+      pageSize: 200
+        }).then((res: any) => { 
+          setIdoHistory(res?.data?.list);
+        }).catch((err: any) => {
+          console.info(err);
+      })
+  }
 
   // 时间转换
   const formatCountdown2 = (timestamp: number) => {
@@ -479,7 +480,7 @@ const Account = () => {
             <path d="M15.5228 4.47681C15.7963 4.75024 15.7963 5.19751 15.5228 5.47095L5.47009 15.5237C5.19666 15.7971 4.74939 15.7971 4.47595 15.5237C4.20251 15.2502 4.20251 14.803 4.47595 14.5295L14.5306 4.47485C14.8021 4.20337 15.2494 4.20337 15.5228 4.47681Z" fill="#ffffff" />
           </svg>
           <div className="flex items-center px-16">
-            <div className="text-[#A8A8A8] text-[16px] w-[132px]">{t('37')}</div>
+            <div className="text-[#A8A8A8] text-[16px] w-[132px]">{t('51')}</div>
             <div className="text-[#A8A8A8] text-[16px] flex-1">{t('46')}</div>
             <div className="text-[#A8A8A8] text-[16px] flex-1 text-right">{t('47')}</div>
           </div>
@@ -488,9 +489,9 @@ const Account = () => {
             idoHistory.length > 0 ?
               idoHistory?.map((item: any, index: number) => (
                 <div className="flex items-center px-16" key={index}>
-                  <div className="text-[#fff] text-[14px] w-[132px]">{formatCountdown2(item?.subscriptionTimes)}</div>
-                  <div className="text-[#fff] text-[14px] flex-1 ">100 CACAKE</div >
-                  <div className="text-[#fff] text-[14px] flex-1 text-right">{t('48')}</div >
+                  <div className="text-[#fff] text-[14px] w-[132px]">{formatCountdown2(item?.createTime)}</div>
+                  <div className="text-[#fff] text-[14px] flex-1 ">{item?.amountCake}  </div >
+                  <div className="text-[#fff] text-[14px] flex-1 text-right">{item?.status}</div >
                 </div>
               ))
               :
@@ -535,20 +536,20 @@ const Account = () => {
           </div>
           <div className="w-full h-[1px] bg-[rgba(255,255,255,0.1)] mt-6 mb-12"></div>
           {
-            rewardHistory.length > 0 ?
-              rewardHistory?.map((item: any, index: number) => (
+            inviteList.length > 0 ?
+            inviteList?.map((item: any, index: number) => (
                 <div className="flex items-center px-16" key={index}>
-                  <div className="text-[#fff] text-[14px] w-[128px]">{formatCountdown2(item?.rewardTimes)}</div>
+                  <div className="text-[#fff] text-[14px] w-[128px]">{formatCountdown2(item?.createTime)}</div>
                   <div className="text-[#fff] text-[14px] flex-1 flex items-center">
                   {
-                  AddrHandle(item?.address,
+                  AddrHandle(item?.userAddress,
                     6,
                     4
                   )}
                   <img src={icon7} className="w-[16px] h-[16px] ml-2" alt="" />
                   </div>
                   <div className="text-[#fff] text-[14px] flex-1 text-right">
-                    8888
+                    {item?.performance}
                   </div>
                 </div>
               ))

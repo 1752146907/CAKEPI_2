@@ -14,9 +14,9 @@ const windowHost = window.location.origin;
 let pattern =
   /^(http:\/\/localhost|http:\/\/192\.168|https:\/\/localhost|https:\/\/192\.168|file:\/\/*)/i;
 export let baseUrl: string = pattern.test(windowHost)
-  ? "https://multiples.im/api"
-  : // "http://13.231.81.65:28888"
-  "https://multiples.im/api";
+  ? "http://18.138.145.177:12340"
+  : 
+  "http://18.138.145.177:12340";
 
 export let ContractUrl: string = isMain
   ? "https://bscscan.com/address/"
