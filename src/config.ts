@@ -16,7 +16,7 @@ let pattern =
 export let baseUrl: string = pattern.test(windowHost)
   ? "http://18.138.145.177:12340"
   : 
-  "http://18.138.145.177:12340";
+  windowHost + "/user";
 
 export let ContractUrl: string = isMain
   ? "https://bscscan.com/address/"
