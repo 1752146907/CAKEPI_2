@@ -20,21 +20,12 @@ export const useSign = () => {
         callback({ sign: res, msg: `${msg}&time=${time}` });
       })
       .catch((res: any) => {
-        if (res.code === 4001) {
-          addMessage(t("failed"));
-          showLoding(false);
-        }
         if (connector instanceof WalletConnectConnector) {
           connector.close(); // WalletConnect 断开连接
-        } else if (
-          connector instanceof AbstractConnector &&
-          connector.deactivate
-        ) {
-          connector.deactivate(); // 通用的断开方法
-        }
-        deactivate();
+        } 
 
         dispatch(createLoginSuccessAction("", account as string));
+        showLoding(false);
       })
       .finally(() => {
         showLoding(false);

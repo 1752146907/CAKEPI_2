@@ -169,6 +169,7 @@ const Account = () => {
   const web3 = new Web3();
   const web3React = useWeb3React();
   const LoginFun = useCallback(async () => {
+    if (!account) return;
     if (web3React.account) { 
       try {
         await signFun((res: any) => { 
