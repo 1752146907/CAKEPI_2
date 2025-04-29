@@ -8,7 +8,7 @@ import CakeNode from "./ABI/CakeNode.json";
 
 export const LOCAL_KEY = "MBAS_LANG";
 // 判断环境
-export const isMain = false;
+export const isMain = true;
 // 自己 /api
 const windowHost = window.location.origin;
 let pattern =
@@ -16,7 +16,7 @@ let pattern =
 export let baseUrl: string = pattern.test(windowHost)
   ? "http://18.138.145.177:12340"
   : 
-  windowHost;
+  windowHost + "/user";
 
 export let ContractUrl: string = isMain
   ? "https://bscscan.com/address/"
@@ -49,7 +49,7 @@ export const Main: contractAddressType = {
   NFTManage: "0x0B3937869D275815eDAA2c617cd8f378ABFF2D6b",
 
   Cake: '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82',
-  CakeNode: '0x09Ce5DE3EF7aE5F0fA5fB226cf57844FC9D31154',
+  CakeNode: '0xc7dCE3239069b157149B69730067CF160f8cD36a',
   CakeIdo: '0x50964613e358A46194668C9b631412DF83AeD8e2',
 };
 
