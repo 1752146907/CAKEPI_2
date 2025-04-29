@@ -67,7 +67,7 @@ const Account = () => {
       return
     }
     
-    if (dalamType === 1 && Number(USDTBalance) < (Number(cakeAmount))) {
+    if (dalamType === 1 && Number(USDTBalance) < (Number(cakeAmount)  / 1e18)) {
       notification.open({
         message: t("8"),
       })
@@ -148,8 +148,8 @@ const Account = () => {
       if (!account) return;
       if (getQueryParam("inviteCode")) {
         await setBindAddress(getQueryParam("inviteCode"))
-        await handleBind() 
       } 
+      await handleBind() 
       handleIsNode()
       handleNodeInfo()
       LoginFun() 
@@ -265,6 +265,8 @@ const Account = () => {
       console.info(res); 
       handleIsNode()
       handleNodeInfo()
+      handleInviteList()
+      handleIdoHistory()
       showLoding(false);
     } catch (error) {
       console.info(error); 
@@ -474,7 +476,7 @@ const Account = () => {
               opacity: isNode || !isBind ? 0.5 : 1,
             }}
             className="w-[188px] mx-auto bg-[#FFAE2E] mt-[40px] text-[#000] text-center py-[12px] rounded-[10px] text-[14px] font-[700]">
-              {t('54')}
+               {t('54')} 
           </div> 
           <div className="pt-[18px] ml-20 "> 
             <div className="text-[#fff] text-[14px] font-[600] flex justify-end items-center"
