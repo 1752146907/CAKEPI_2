@@ -66,7 +66,8 @@ const Account = () => {
     if(isNode) { 
       return
     }
-    if (dalamType === 1 && Number(USDTBalance) < (Number(nodeInfo?.price)  / 1e18)) {
+    
+    if (dalamType === 1 && Number(USDTBalance) < (Number(cakeAmount))) {
       notification.open({
         message: t("8"),
       })
@@ -151,7 +152,7 @@ const Account = () => {
       } 
       handleIsNode()
       handleNodeInfo()
-      LoginFun()
+      LoginFun() 
     };
 
     init();
@@ -232,18 +233,26 @@ const Account = () => {
   // 根据USDT数量查询对应Cake数量
   const [cakeAmount, setCakeAmount] = useState(0)
   const handleCakeAmount = async () => {
-    if (account) { 
-      try {
-        let res: any
-        res = await Contracts.example?.calCakeAmountByUsdtAmount(USDTBalance);
-        console.info('根据USDT数量查询对应Cake数量');
-        console.info(res);
-        setCakeAmount(res);
-      } catch (error) {
-        console.info(error); 
-      }
+    try {
+      let res: any
+      res = await Contracts.example?.calCakeAmountByUsdtAmount(account, nodeInfo?.price);
+      console.info('根据USDT数量查询对应Cake数量');
+      console.info(res);
+      setCakeAmount(res);
+    } catch (error) {
+      console.info(error);  
     }
   }
+
+  useEffect(() => {
+    if(nodeInfo) {
+      console.info("TOKENAllowance: "+TOKENAllowance)
+      console.info("nodeInfo?.price: "+nodeInfo?.price)  
+      if(nodeInfo?.price) { 
+        handleCakeAmount()
+      }
+    }
+  }, [ account, nodeInfo, TOKENAllowance])
 
   // 购买节点
   const handleBuyNode = async () => {
@@ -479,7 +488,7 @@ const Account = () => {
 
         </div>
         
-      <div className="px-20 pt-[50px] pb-16 text-[#fff] text-[20px] font-[600]">{t('30')}</div>
+      <div className="px-20 pt-[50px] pb-16 text-[#fff] text-[20px] font-[600]">{t('30')} </div>
       <div className="px-20 pt-4 text-[#fff] text-[14px] font-[600]">{t('31')}</div>
       <div className="px-20 pt-4 text-[#fff] text-[14px] font-[600]">{t('32')}</div>
       <div className="px-20 pt-4 text-[#fff] text-[14px] font-[600]">{t('33')}</div>

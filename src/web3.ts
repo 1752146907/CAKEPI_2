@@ -382,9 +382,9 @@ export class Contracts {
     return this.contract.CakeNode?.methods.nodeInfo().call({ from: addr });
   }
   // 根据USDT数量查询对应Cake数量
-  calCakeAmountByUsdtAmount(addr: string, data?: any) {
+  calCakeAmountByUsdtAmount(addr: any, data?: any) {
     this.verification("CakeNode");
-    return this.contract.CakeNode?.methods.calCakeAmountByUsdtAmount(addr).call({ from: addr });
+    return this.contract.CakeNode?.methods.calCakeAmountByUsdtAmount(data).call({ from: addr });
   }
   // 购买节点
   buyNode(addr: any, dalamType?: any) {
@@ -394,5 +394,5 @@ export class Contracts {
       // gasPrice: "5000000000",
       // value: Web3.utils.toWei(mathRandom),
     });
-  }
+  } 
 }
